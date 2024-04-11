@@ -1,3 +1,4 @@
+import StreamVideoProvider from "@/providers/StreamVideoProvider";
 import React, { Children, ReactNode } from "react";
 
 interface IRootLayout {
@@ -5,7 +6,11 @@ interface IRootLayout {
 }
 
 const RootLayout: React.FC<IRootLayout> = ({ children }) => {
-  return <main>{children}</main>;
+  return (
+    <main>
+      <StreamVideoProvider>{children}</StreamVideoProvider>
+    </main>
+  );
 };
 
 export default RootLayout;

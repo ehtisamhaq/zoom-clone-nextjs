@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 
-import Navbar from "@/components/home/Navbar";
-import Sidebar from "@/components/home/Sidebar";
+import Sidebar from "@/components/utils/Sidebar";
+import Navbar from "@/components/utils/Navbar";
 
 interface IHomeLayout {
   children: ReactNode;
