@@ -7,7 +7,11 @@ import CardItem from "./CardItem";
 import MeetingModal from "./MeetingModal";
 import { useUser } from "@clerk/nextjs";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
+import ReactDatePicker from "react-datepicker";
+
 import { toast } from "../ui/use-toast";
+import { Textarea } from "../ui/textarea";
+import { Input } from "../ui/input";
 
 const initialValues = {
   dateTime: new Date(),
@@ -94,7 +98,7 @@ const MeetingTypeList = () => {
         handleClick={() => router.push("/recordings")}
       />
 
-      {/* {!callDetail ? (
+      {!callDetail ? (
         <MeetingModal
           isOpen={meetingState === "isScheduleMeeting"}
           onClose={() => setMeetingState(undefined)}
@@ -142,9 +146,9 @@ const MeetingTypeList = () => {
           className="text-center"
           buttonText="Copy Meeting Link"
         />
-      )} */}
+      )}
 
-      {/* <MeetingModal
+      <MeetingModal
         isOpen={meetingState === "isJoiningMeeting"}
         onClose={() => setMeetingState(undefined)}
         title="Type the link here"
@@ -157,7 +161,7 @@ const MeetingTypeList = () => {
           onChange={(e) => setValues({ ...values, link: e.target.value })}
           className="border-none bg-dark-3 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
-      </MeetingModal> */}
+      </MeetingModal>
 
       <MeetingModal
         isOpen={meetingState === "isInstantMeeting"}
