@@ -1,16 +1,17 @@
+/* eslint-disable camelcase */
 "use client";
 
-import React from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import CardItem from "./CardItem";
 import MeetingModal from "./MeetingModal";
-import { useUser } from "@clerk/nextjs";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
+import { useUser } from "@clerk/nextjs";
 import ReactDatePicker from "react-datepicker";
-
-import { toast } from "../ui/use-toast";
+import CardItem from "./CardItem";
+import Loader from "../utils/Loader";
 import { Textarea } from "../ui/textarea";
+import { useToast } from "../ui/use-toast";
 import { Input } from "../ui/input";
 
 const initialValues = {
@@ -21,52 +22,52 @@ const initialValues = {
 
 const MeetingTypeList = () => {
   const router = useRouter();
-  const [meetingState, setMeetingState] = React.useState<
+  const [meetingState, setMeetingState] = useState<
     "isScheduleMeeting" | "isJoiningMeeting" | "isInstantMeeting" | undefined
   >(undefined);
-  const [values, setValues] = React.useState(initialValues);
-  const [callDetail, setCallDetail] = React.useState<Call>();
-
-  const user = useUser();
+  const [values, setValues] = useState(initialValues);
+  const [callDetail, setCallDetail] = useState<Call>();
   const client = useStreamVideoClient();
+  const { user } = useUser();
+  const { toast } = useToast();
 
   const createMeeting = async () => {
-    if (!user || !client) return;
-
+    if (!client || !user) return;
     try {
       if (!values.dateTime) {
         toast({ title: "Please select a date and time" });
         return;
       }
-
       const id = crypto.randomUUID();
-      const call = await client.call("default", id);
-      if (!call) throw new Error("Failed to start a call");
-
-      const starts_at =
+      const call = client.call("default", id);
+      if (!call) throw new Error("Failed to create meeting");
+      const startsAt =
         values.dateTime.toISOString() || new Date(Date.now()).toISOString();
       const description = values.description || "Instant Meeting";
-
       await call.getOrCreate({
         data: {
-          starts_at,
+          starts_at: startsAt,
           custom: {
             description,
           },
         },
       });
-
       setCallDetail(call);
-
       if (!values.description) {
         router.push(`/meeting/${call.id}`);
       }
-      toast({ title: "Meeting Created!" });
+      toast({
+        title: "Meeting Created",
+      });
     } catch (error) {
-      console.log(error);
-      toast({ title: "Failed to create Meeting", variant: "destructive" });
+      console.error(error);
+      toast({ title: "Failed to create Meeting" });
     }
   };
+
+  if (!client || !user) return <Loader />;
+
+  const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callDetail?.id}`;
 
   return (
     <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
